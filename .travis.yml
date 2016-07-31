@@ -5,7 +5,6 @@ sudo: true
 branches:
   only:
     - master
-    - develop
 env:
   global:
     - TORCH_SERVER=https://raw.githubusercontent.com/torch/rocks/master/
