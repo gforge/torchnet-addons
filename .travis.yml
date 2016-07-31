@@ -40,7 +40,7 @@ install:
   - luarocks make rocks/torchnet-addons-scm-1.rockspec CFLAGS="-O2 -fPIC -fprofile-arcs -ftest-coverage" LIBFLAG="-shared --coverage"
 
 script:
-  - th test/test.lua --version $LUA
+  - th test/test.lua
 
 notifications:
   email:
