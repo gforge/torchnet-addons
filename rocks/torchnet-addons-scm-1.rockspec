@@ -24,9 +24,10 @@ dependencies = {
     "nn"
 }
 build = {
-  type = 'builtin',
-  modules = {
-      ["torchnet-addons.init"] = 'init.lua',
-      ["torchnet-addons.meter.tablemeter"] = 'meter/tablemeter.lua'
-  }
+   type = "cmake",
+   variables = {
+      CMAKE_BUILD_TYPE="Release",
+      LUA_PATH="$(LUADIR)",
+      LUA_CPATH="$(LIBDIR)"
+   }
 }
