@@ -8,17 +8,6 @@ local base_path = paths.thisfile():gsub("doc.lua$", "?.lua")
 local utils_file = base_path:gsub("?", "utils")
 assert(loadfile(utils_file))()
 
--- README file
-local readmefile = io.open("README.md", "w")
-
-argdoc.record()
-local init_file = base_path:gsub("?", "init")
-local tnt = assert(loadfile(init_file))(true)
-content = argdoc.stop()
-
-readmefile:write(content)
-readmefile:close()
-
 if (not paths.dirp("doc")) then
   paths.mkdir("doc")
 end

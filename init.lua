@@ -1,23 +1,6 @@
 local tnt = require 'torchnet'
 local doc = require 'argcheck.doc'
 
--- The README file is generated here
-doc[[
-[![Build Status](https://travis-ci.org/gforge/torchnet-addons.svg)](https://travis-ci.org/gforge/torchnet-addons)
-
-# torchnet-addons
-
-The torchnet-addons package contains extensions to the [torchnet](https://github.com/torchnet/torchnet).
-
-## The documentation
-
-The documentation is generated via the `doc.lua` script. Note that this has to be
-invoked with `> /dev/null` in order to avoid sundown-ascii codes to appear:
-
-`th doc.lua > /dev/null`
-
-]]
-
 -- This is a solution that allows the doc.lua to run the loader twice
 if (not __TORCHNET_ADDONS_INIT__) then
   local base_path = paths.thisfile():gsub("init.lua$", "?.lua")

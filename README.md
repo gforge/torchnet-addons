@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/gforge/torchnet-addons.svg)](https://travis-ci.org/gforge/torchnet-addons)
+![Build Status](https://travis-ci.org/gforge/torchnet-addons.svg)](https://travis-ci.org/gforge/torchnet-addons)
 
 # torchnet-addons
 
@@ -10,4 +10,3 @@ The documentation is generated via the `doc.lua` script. Note that this has to b
 invoked with `> /dev/null` in order to avoid sundown-ascii codes to appear:
 
 `th doc.lua > /dev/null`
-
