@@ -1,9 +1,6 @@
 local tnt = require 'torchnet'
 local doc = require 'argcheck.doc'
 
-local params = {...}
-local skip_load = params[1]
-
 -- The README file is generated here
 doc[[
 [![Build Status](https://travis-ci.org/gforge/torchnet-addons.svg)](https://travis-ci.org/gforge/torchnet-addons)
@@ -22,7 +19,7 @@ invoked with `> /dev/null` in order to avoid sundown-ascii codes to appear:
 ]]
 
 -- This is a solution that allows the doc.lua to run the loader twice
-if (not skip_load and not __TORCHNET_ADDONS_INIT__) then
+if (not __TORCHNET_ADDONS_INIT__) then
   local base_path = paths.thisfile():gsub("init.lua$", "?.lua")
 
   local utils_file = base_path:gsub("?", "utils")
@@ -35,6 +32,7 @@ if (not skip_load and not __TORCHNET_ADDONS_INIT__) then
 
       local tnt_files = paths.get_sorted_files(tnt_path)
       for _, file_name in pairs(tnt_files) do
+
         if (file_name:match("[.]lua$")) then
           local full_path = tnt_path .. file_name
 

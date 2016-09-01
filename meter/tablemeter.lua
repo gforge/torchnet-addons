@@ -3,7 +3,10 @@ local tnt = params[1]
 
 local argcheck = require 'argcheck'
 
-local TableMeter = torch.class('tnt.TableMeter', 'tnt.Meter', tnt)
+local TableMeter = tnt.TableMeter
+if (not TableMeter) then
+   TableMeter = torch.class('tnt.TableMeter', 'tnt.Meter', tnt)
+end
 
 TableMeter.__init = argcheck{
    doc = [[

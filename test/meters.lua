@@ -1,5 +1,4 @@
-local init_file = paths.thisfile():gsub("test/meters.lua$", "init.lua")
-local tnt = paths.dofile(init_file)
+local tnt = require 'torchnet.env'
 
 local tester
 local test = torch.TestSuite()
