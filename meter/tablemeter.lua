@@ -30,10 +30,13 @@ If `k` is omitted then the meters will be created at the first `add` call
     doc="A class for the meter that should be applied to each table element, e.g. tnt.AverageValueMeter"},
    {name="classargs", type="table", default={},
     doc="Arguments for the meter class"},
-   call = function(self, k, class, classargs)
+   {name="names", type="table", opt=true,
+    doc="The names for the different outcomes"},
+   call = function(self, k, class, classargs, names)
       self.meters = {}
       self.class = class
       self.classargs = classargs
+      self.names = names
 
       if (k) then
          self:_createMeters(k)
@@ -46,6 +49,9 @@ TableMeter._createMeters = argcheck{
    {name="k", type="number"},
    call=function(self, k)
       assert(k > 0, "The number of meters must be positive")
+      if (self.names) then
+         assert(k == #self.names, "The names and the number of meters must match")
+      end
 
       for i=1,k do
          -- Named arguments for consructor then classargs[1] is nil
@@ -172,7 +178,17 @@ _Return value_: table
          for meter_no=1,#self.meters do
             value[meter_no] = self:value(meter_no, parameters)
          end
-         return value
+
+         if (not self.names) then
+            return value
+         end
+
+         -- Add names to output
+         ret = {}
+         for meter_no=1,#self.meters do
+            ret[self.names[meter_no]] = value[meter_no]
+         end
+         return ret
       end
    end
 }
