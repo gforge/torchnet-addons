@@ -104,7 +104,15 @@ ClassErrorMeterIgnore.add = argcheck{
             else
                return 1
             end
-         end):byte()
+         end)
+
+         -- Handle mask with cuda
+         if (torch.type(target):match("torch.Cuda")) then
+           mask = mask:cudaByte()
+         else
+           mask = mask:byte()
+         end
+
          target = target:maskedSelect(mask)
          mask = mask:view(output:size(1), 1):expandAs(output)
          output = output:maskedSelect(mask):resize(
