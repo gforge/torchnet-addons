@@ -114,6 +114,28 @@ function test.TableMeter()
 
    error = mtr:value{parameters = {k = 1}}
    tester:eq(error, {50, 50}, "Should be able to pass parameters to sub-meter")
+
+   -- Test with names
+   local mtr = tnt.TableMeter{
+      class =  tnt.ClassErrorMeter,
+      classargs = {topk = {1}},
+      names = {"one", "two"}
+   }
+
+   target = torch.Tensor{
+      {1,2,3},
+      {1,2,2}
+   }
+
+   mtr:add(output, target)
+   local error = mtr:value()
+   tester:eq(error, {
+     one = {0},
+     two = {0}}, "Failed to produce named meters")
+
+   tester:eq(mtr:value{pack=true},{
+     one = {{0}, n= 1},
+     two = {{0}, n= 1}}, "Failed to produce packed named meters")
 end
 
 return function(_tester_)
