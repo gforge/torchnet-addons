@@ -38,6 +38,43 @@ function test.ClassErrorMeter()
    tester:eq(error, {50}, "Half, i.e. 50%, should be correct")
 end
 
+function test.ClassErrorMeterIgnore()
+   local mtr = tnt.ClassErrorMeterIgnore{topk = {1}, ignore=0}
+
+   local output = torch.Tensor({{1,0,0},{0,1,0},{0,0,1}})
+   local target = torch.Tensor({1,2,3})
+   mtr:add(output, target)
+   local error = mtr:value()
+
+   tester:eq(error, {0}, "All should be correct")
+
+   target[1] = 2
+   target[2] = 1
+   target[3] = 1
+   mtr:add(output, target)
+
+   error = mtr:value()
+   tester:eq(error, {50}, "Half, i.e. 50%, should be wrong")
+
+   -- Now add ignore
+   mtr:reset()
+   local output = torch.Tensor({{1,0,0},{1,0,0},{0,0,1}})
+   local target = torch.Tensor({1,0,3})
+   mtr:add(output, target)
+   local error = mtr:value()
+
+   tester:eq(error, {0}, "All should be correct")
+
+   target[1] = 0
+   target[2] = 1
+   target[3] = 1
+   mtr:add(output, target)
+
+   error = mtr:value()
+   tester:eq(error, {(1)/(1+1+1+1)*100},
+             "Half, i.e. 25%, should be wrong")
+end
+
 function test.TableMeter()
    local mtr = tnt.TableMeter{
       class =  tnt.ClassErrorMeter,
