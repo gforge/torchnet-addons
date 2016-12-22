@@ -77,6 +77,19 @@ ClassErrorMeterIgnore.add = argcheck{
    {name="target", type="torch.*Tensor"},
    call =
       function(self, output, target)
+         -- We need to keep track if variables should be converted to cuda-mode
+         local inCudaMode = false
+         if (torch.type(target):match("torch.Cuda")) then
+           inCudaMode = true
+         end
+
+         -- For some reason the cuda functions arent always attached to the
+         -- Tensor objects
+         if (target.squeeze == nil) then
+            assert(inCudaMode, "The squeeze function on the target tensor is missing - this should only happen in cuda")
+            target = target:cuda()
+            output = output:cuda()
+         end
          target = target:squeeze()
          output = output:squeeze()
          if output:nDimension() == 1 then
@@ -98,7 +111,12 @@ ClassErrorMeterIgnore.add = argcheck{
             'target and output do not match')
 
          -- Calculate and apply the ignore mask for the data
-         mask = target:clone():apply(function(var)
+         mask = target:clone()
+         if (mask.apply == nil) then
+           assert(inCudaMode, "The apply function on the target tensor is missing - this should only happen in cuda")
+           mask = mask:cuda()
+         end
+         mask:apply(function(var)
             if (var == self.ignore) then
                return 0
             else
@@ -106,15 +124,19 @@ ClassErrorMeterIgnore.add = argcheck{
             end
          end)
 
-         -- Handle mask with cuda
-         if (torch.type(target):match("torch.Cuda")) then
+         -- Convert mask to bytes
+         if (inCudaMode) then
            mask = mask:cudaByte()
          else
            mask = mask:byte()
          end
 
+         -- If you get: ....: invalid arguments: CudaTensor CudaByteTensor
+         --             expected arguments: [*CudaTensor*] CudaTensor CudaTensor
+         -- You may be running an old cuda-version (< 8)
          target = target:maskedSelect(mask)
          mask = mask:view(output:size(1), 1):expandAs(output)
+
          output = output:maskedSelect(mask):resize(
             target:size(1),
             output:size(2)
@@ -124,7 +146,6 @@ ClassErrorMeterIgnore.add = argcheck{
          local maxk = topk[#topk]
          local no = output:size(1)
          local _, pred = output:double():topk(maxk, 2, true, true)
-
          local correct = pred:typeAs(target):eq(
             target:view(no, 1):expandAs(pred))
 
