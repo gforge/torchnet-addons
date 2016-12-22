@@ -77,7 +77,7 @@ function test.ClassErrorMeterIgnore()
 
    mtr:reset()
    local output = torch.Tensor({{1,0,0},{1,0,0},{0,0,1}}):cuda()
-   local target = torch.Tensor({1,0,3}):cuda()
+   local target = torch.Tensor({1,0,3}):cudaDouble()
    mtr:add(output, target)
    local error = mtr:value()
 

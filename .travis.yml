@@ -33,6 +33,7 @@ install:
   - luarocks --from=$TORCH_SERVER install dok
   - luarocks --from=$TORCH_SERVER install argcheck
   - luarocks --from=$TORCH_SERVER install csvigo
+  - luarocks --from=$TORCH_SERVER install cutorch
   - luarocks install luafilesystem
   - luarocks install paths
   - luarocks install threads
