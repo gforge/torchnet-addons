@@ -135,13 +135,14 @@ ClassErrorMeterIgnore.add = argcheck{
          --             expected arguments: [*CudaTensor*] CudaTensor CudaTensor
          -- You may be running an old cuda-version (< 8)
          target = target:maskedSelect(mask)
+         -- If all are missing then skip all calculations
+         if (#target:size() == 0) then
+            return
+         end
          mask = mask:view(output:size(1), 1):expandAs(output)
 
          local rows = target:size(1)
          if (#output:size() < 2) then
-            print("ERROR!")
-            print(output)
-            print(outptu:size())
             assert(false, "The output had too few dimensions")
          end
          local cols = output:size(2)

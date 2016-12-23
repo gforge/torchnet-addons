@@ -67,13 +67,23 @@ function test.ClassErrorMeterIgnore()
    tester:eq(error, {0}, "All should be correct")
 
    target[1] = 0
-   target[2] = 1
-   target[3] = 1
+   target[2] = 1 -- correct
+   target[3] = 1 -- wrong
    mtr:add(output, target)
 
    error = mtr:value()
    tester:eq(error, {(1)/(1+1+1+1)*100},
              "Half, i.e. 25%, should be wrong")
+
+
+   target[1] = 0
+   target[2] = 0 -- correct
+   target[3] = 0 -- wrong
+   mtr:add(output, target)
+
+   error = mtr:value()
+   tester:eq(error, {(1)/(1+1+1+1)*100},
+             "All ignore should not change results, i.e. 25%, should be wrong")
 
    mtr:reset()
    local output = torch.Tensor({{1,0,0},{1,0,0},{0,0,1}}):cuda()
