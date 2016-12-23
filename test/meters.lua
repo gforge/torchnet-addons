@@ -1,5 +1,9 @@
 local tnt = require 'torchnet.env'
-require 'cutorch'
+
+-- CUDA testing on Travis is just painful...
+if not os.getenv("TRAVIS_TEST") then
+   require 'cutorch'
+end
 
 local tester
 local test = torch.TestSuite()
@@ -85,22 +89,25 @@ function test.ClassErrorMeterIgnore()
    tester:eq(error, {(1)/(1+1+1+1)*100},
              "All ignore should not change results, i.e. 25%, should be wrong")
 
-   mtr:reset()
-   local output = torch.Tensor({{1,0,0},{1,0,0},{0,0,1}}):cuda()
-   local target = torch.Tensor({1,0,3}):cudaDouble()
-   mtr:add(output, target)
-   local error = mtr:value()
+   if not os.getenv("TRAVIS_TEST") then
 
-   tester:eq(error, {0}, "All should be correct in cuda mode")
+      mtr:reset()
+      local output = torch.Tensor({{1,0,0},{1,0,0},{0,0,1}}):cuda()
+      local target = torch.Tensor({1,0,3}):cudaDouble()
+      mtr:add(output, target)
+      local error = mtr:value()
 
-   target[1] = 0
-   target[2] = 1
-   target[3] = 1
-   mtr:add(output, target)
+      tester:eq(error, {0}, "All should be correct in cuda mode")
 
-   error = mtr:value()
-   tester:eq(error, {(1)/(1+1+1+1)*100},
-             "Half, i.e. 25%, should be wrong in cuda mode")
+      target[1] = 0
+      target[2] = 1
+      target[3] = 1
+      mtr:add(output, target)
+
+      error = mtr:value()
+      tester:eq(error, {(1)/(1+1+1+1)*100},
+                "Half, i.e. 25%, should be wrong in cuda mode")
+   end
 end
 
 function test.TableMeter()
