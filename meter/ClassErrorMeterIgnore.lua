@@ -111,7 +111,7 @@ ClassErrorMeterIgnore.add = argcheck{
             'target and output do not match')
 
          -- Calculate and apply the ignore mask for the data
-         mask = target:clone()
+         local mask = target:clone()
          if (mask.apply == nil) then
            assert(inCudaMode, "The apply function on the target tensor is missing - this should only happen in cuda")
            mask = mask:cuda()
@@ -137,10 +137,15 @@ ClassErrorMeterIgnore.add = argcheck{
          target = target:maskedSelect(mask)
          mask = mask:view(output:size(1), 1):expandAs(output)
 
-         output = output:maskedSelect(mask):resize(
-            target:size(1),
-            output:size(2)
-         )
+         local rows = target:size(1)
+         if (#output:size() < 2) then
+            print("ERROR!")
+            print(output)
+            print(outptu:size())
+            assert(false, "The output had too few dimensions")
+         end
+         local cols = output:size(2)
+         output = output:maskedSelect(mask):resize(rows, cols)
 
          local topk = self.topk
          local maxk = topk[#topk]
